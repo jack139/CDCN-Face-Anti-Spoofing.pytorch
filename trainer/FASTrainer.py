@@ -19,6 +19,7 @@ class FASTrainer(BaseTrainer):
         self.val_loss_metric = AvgMeter(writer=writer, name='Loss/val', num_iter_per_epoch=len(self.valloader))
         self.val_acc_metric = AvgMeter(writer=writer, name='Accuracy/val', num_iter_per_epoch=len(self.valloader))
 
+        self.best_val_acc = 0.0
 
     def load_model(self):
         saved_name = os.path.join(self.cfg['output_dir'], '{}_{}.pth'.format(self.cfg['model']['base'], self.cfg['dataset']['name']))
@@ -28,11 +29,12 @@ class FASTrainer(BaseTrainer):
         self.network.load_state_dict(state['state_dict'])
 
 
-    def save_model(self, epoch):
+    def save_model(self, epoch, epoch_acc):
         if not os.path.exists(self.cfg['output_dir']):
             os.makedirs(self.cfg['output_dir'])
 
-        saved_name = os.path.join(self.cfg['output_dir'], '{}_{}.pth'.format(self.cfg['model']['base'], self.cfg['dataset']['name']))
+        saved_name = os.path.join(self.cfg['output_dir'], 
+            '{}_{}_e{}_acc_{:.4f}.pth'.format(self.cfg['model']['base'], self.cfg['dataset']['name'], epoch, epoch_acc))
 
         state = {
             'epoch': epoch,
@@ -44,7 +46,6 @@ class FASTrainer(BaseTrainer):
 
 
     def train_one_epoch(self, epoch):
-
         self.network.train()
         self.train_loss_metric.reset(epoch)
         self.train_acc_metric.reset(epoch)
@@ -66,7 +67,7 @@ class FASTrainer(BaseTrainer):
             self.train_loss_metric.update(loss.item())
             self.train_acc_metric.update(accuracy)
 
-            print('Epoch: {}, iter: {}, loss: {}, acc: {}'.format(epoch, epoch * len(self.trainloader) + i, self.train_loss_metric.avg, self.train_acc_metric.avg))
+            print('Epoch: {}, iter: {}, loss: {:.8f}, acc: {:.4f}'.format(epoch, epoch * len(self.trainloader) + i, self.train_loss_metric.avg, self.train_acc_metric.avg))
 
 
     def train(self):
@@ -74,9 +75,10 @@ class FASTrainer(BaseTrainer):
         for epoch in range(self.cfg['train']['num_epochs']):
             self.train_one_epoch(epoch)
             epoch_acc = self.validate(epoch)
-            # if epoch_acc > self.best_val_acc:
-            #     self.best_val_acc = epoch_acc
-            self.save_model(epoch)
+            if epoch_acc >= self.best_val_acc:
+                self.best_val_acc = epoch_acc
+                self.save_model(epoch, epoch_acc)
+            print('--------- val_acc: {}, best_val_acc: {}'.format(epoch_acc, self.best_val_acc))
 
 
     def validate(self, epoch):
