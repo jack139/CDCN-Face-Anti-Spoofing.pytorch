@@ -5,6 +5,7 @@ import torchvision
 from trainer.base import BaseTrainer
 from utils.meters import AvgMeter
 from utils.eval import add_visualization_to_tensorboard, predict, calc_accuracy
+from tqdm import tqdm
 
 
 class FASTrainer(BaseTrainer):
@@ -50,7 +51,8 @@ class FASTrainer(BaseTrainer):
         self.train_loss_metric.reset(epoch)
         self.train_acc_metric.reset(epoch)
 
-        for i, (img, depth_map, label) in enumerate(self.trainloader):
+        print('\nEpoch: {}'.format(epoch+1))
+        for i, (img, depth_map, label) in tqdm(enumerate(self.trainloader), total=len(self.trainloader)):
             img, depth_map, label = img.to(self.device), depth_map.to(self.device), label.to(self.device)
             net_depth_map, _, _, _, _, _ = self.network(img)
             self.optimizer.zero_grad()
@@ -67,7 +69,7 @@ class FASTrainer(BaseTrainer):
             self.train_loss_metric.update(loss.item())
             self.train_acc_metric.update(accuracy)
 
-            print('Epoch: {}, iter: {}, loss: {:.8f}, acc: {:.4f}'.format(epoch, epoch * len(self.trainloader) + i, self.train_loss_metric.avg, self.train_acc_metric.avg))
+        print('iter: {}, loss: {:.6f}, acc: {:.4f}'.format(epoch * len(self.trainloader) + i, self.train_loss_metric.avg, self.train_acc_metric.avg))
 
 
     def train(self):
@@ -78,7 +80,7 @@ class FASTrainer(BaseTrainer):
             if epoch_acc >= self.best_val_acc:
                 self.best_val_acc = epoch_acc
                 self.save_model(epoch, epoch_acc)
-            print('--------- val_acc: {}, best_val_acc: {}'.format(epoch_acc, self.best_val_acc))
+            print('val_acc: {:.4f}, best_val_acc: {:.4f}'.format(epoch_acc, self.best_val_acc))
 
 
     def validate(self, epoch):
@@ -88,7 +90,7 @@ class FASTrainer(BaseTrainer):
 
         seed = randint(0, len(self.valloader)-1)
         with torch.no_grad():
-            for i, (img, depth_map, label) in enumerate(self.valloader):
+            for i, (img, depth_map, label) in tqdm(enumerate(self.valloader), total=len(self.valloader)):
                 img, depth_map, label = img.to(self.device), depth_map.to(self.device), label.to(self.device)
                 net_depth_map, _, _, _, _, _ = self.network(img)
                 loss = self.criterion(net_depth_map, depth_map)

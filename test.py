@@ -21,10 +21,13 @@ val_transform = transforms.Compose([
     transforms.Normalize(cfg['dataset']['mean'], cfg['dataset']['sigma'])
 ])
 
-saved_name = os.path.join(cfg['output_dir'], "CDCNpp_nuaa_e73_acc_1.0000.pth")
+saved_name = os.path.join(cfg['output_dir'], "CDCNpp_nuaa_e16_acc_0.8658.pth")
 state = torch.load(saved_name, map_location=device)
 network.load_state_dict(state['state_dict'])
 print("load model: ", saved_name)
+
+if device!='cpu':
+    network.cuda()
 
 
 def test(img):
