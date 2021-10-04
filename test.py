@@ -7,6 +7,7 @@ import cv2
 from utils.utils import read_cfg, build_network
 from utils.eval import predict
 import face_recognition
+from datetime import datetime
 
 cfg = read_cfg(cfg_file="config/CDCNpp_adam_lr1e-3.yaml")
 
@@ -26,7 +27,7 @@ state = torch.load(saved_name, map_location=device)
 network.load_state_dict(state['state_dict'])
 print("load model: ", saved_name)
 
-if device!='cpu':
+if device.type!='cpu':
     network.cuda()
 
 
@@ -42,8 +43,7 @@ def test(img):
 
         preds, score = predict(net_depth_map)
 
-    print(preds)
-    print(score)
+    return preds, score
 
 if __name__ == '__main__':
     
@@ -69,4 +69,9 @@ if __name__ == '__main__':
 
         #face_img.save('img2_%d_%d.jpg'%(x,y))
 
-        test(face_img)
+        start_time = datetime.now()
+        preds, score = test(face_img)
+        print('[Time taken: {!s}]'.format(datetime.now() - start_time))
+
+        print(preds)
+        print(score)
