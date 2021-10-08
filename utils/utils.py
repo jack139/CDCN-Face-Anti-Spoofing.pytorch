@@ -2,6 +2,7 @@ import yaml
 import torch
 from torch import optim
 from models.CDCNs import CDCN, CDCNpp
+from models.DC_CDN import C_CDN, DC_CDN
 
 
 def read_cfg(cfg_file):
@@ -66,6 +67,10 @@ def build_network(cfg):
         network = CDCNpp()
     elif cfg['model']['base'] == 'CDCN':
         network = CDCN()
+    elif cfg['model']['base'] == 'C_CDN':
+        network = C_CDN()
+    elif cfg['model']['base'] == 'DC_CDN':
+        network = DC_CDN()
     else:
         raise NotImplementedError
 
