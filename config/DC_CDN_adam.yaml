@@ -3,7 +3,7 @@ log_dir: 'experiments/log'
 device: '0'
 dataset:
   name: 'nuaa'
-  root: '../datasets/NUAA_Detectedface'
+  root: '../../datasets/NUAA_Detectedface'
   #root: '/media/tao/_dde_data/Datasets/NUAA_Detectedface'
   augmentation:
     horizontal_flip: True
@@ -23,11 +23,11 @@ model:
   input_size: [256,256]
   depth_map_size: [32,32]
 train:
-  batch_size: 8
+  batch_size: 4
   optimizer: 'adam'
   lr: 0.00008
   num_epochs: 100
   smoothing: True
 val:
-  batch_size: 8
+  batch_size: 4
 

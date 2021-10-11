@@ -11,7 +11,8 @@ from torch.optim.lr_scheduler import StepLR
 
 
 #cfg = read_cfg(cfg_file="config/CDCNpp_adam_lr1e-3.yaml")
-cfg = read_cfg(cfg_file="config/C_CDN_adam.yaml")
+#cfg = read_cfg(cfg_file="config/C_CDN_adam.yaml")
+cfg = read_cfg(cfg_file="config/DC_CDN_adam.yaml")
 
 device = get_device(cfg)
 
@@ -27,7 +28,7 @@ writer = SummaryWriter(cfg['log_dir'])
 
 dump_input = torch.randn((1, 3, cfg['model']['input_size'][0], cfg['model']['input_size'][1]))
 
-writer.add_graph(network, dump_input)
+#writer.add_graph(network, dump_input)
 
 train_transform = transforms.Compose([
     RandomGammaCorrection(max_gamma=cfg['dataset']['augmentation']['gamma_correction'][1],

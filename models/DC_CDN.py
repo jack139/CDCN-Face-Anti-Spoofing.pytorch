@@ -41,8 +41,7 @@ class Conv2d_Hori_Veri_Cross(nn.Module):
         
         
         [C_out,C_in,H_k,W_k] = self.conv.weight.shape
-        tensor_zeros = torch.FloatTensor(C_out, C_in, 1).fill_(0)
-        #tensor_zeros = torch.FloatTensor(C_out, C_in, 1).fill_(0).cuda()
+        tensor_zeros = torch.FloatTensor(C_out, C_in, 1).fill_(0).cuda()
         conv_weight = torch.cat((tensor_zeros, self.conv.weight[:,:,:,0], tensor_zeros, self.conv.weight[:,:,:,1], self.conv.weight[:,:,:,2], self.conv.weight[:,:,:,3], tensor_zeros, self.conv.weight[:,:,:,4], tensor_zeros), 2)
         conv_weight = conv_weight.contiguous().view(C_out, C_in, 3, 3)
         
@@ -73,8 +72,7 @@ class Conv2d_Diag_Cross(nn.Module):
         
         
         [C_out,C_in,H_k,W_k] = self.conv.weight.shape
-        tensor_zeros = torch.FloatTensor(C_out, C_in, 1).fill_(0)
-        #tensor_zeros = torch.FloatTensor(C_out, C_in, 1).fill_(0).cuda()
+        tensor_zeros = torch.FloatTensor(C_out, C_in, 1).fill_(0).cuda()
         conv_weight = torch.cat((self.conv.weight[:,:,:,0], tensor_zeros, self.conv.weight[:,:,:,1], tensor_zeros, self.conv.weight[:,:,:,2], tensor_zeros, self.conv.weight[:,:,:,3], tensor_zeros, self.conv.weight[:,:,:,4]), 2)
         conv_weight = conv_weight.contiguous().view(C_out, C_in, 3, 3)
         

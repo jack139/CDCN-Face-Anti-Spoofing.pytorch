@@ -3,7 +3,7 @@ log_dir: 'experiments/log'
 device: '0'
 dataset:
   name: 'nuaa'
-  root: '../datasets/NUAA_Detectedface'
+  root: '../../datasets/NUAA_Detectedface'
   augmentation:
     horizontal_flip: True
     rotation_range: 10
