@@ -25,7 +25,7 @@ model:
 train:
   batch_size: 4
   optimizer: 'adam'
-  lr: 0.00008
+  lr: 0.0001
   num_epochs: 100
   smoothing: True
 val:
